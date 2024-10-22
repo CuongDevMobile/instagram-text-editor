@@ -15,27 +15,37 @@ class _ColorPaletteState extends State<ColorPalette> {
   Widget build(BuildContext context) {
     final textStyleModel = TextEditorData.of(context).textStyleModel;
     return Container(
+      margin: EdgeInsets.only(bottom: 20),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
             Container(
-              width: 40,
-              height: 40,
-              margin: EdgeInsets.only(right: 7),
+              width: 32,
+              height: 44,
+              padding: EdgeInsets.symmetric(vertical: 4),
+              margin: EdgeInsets.only(right: 8),
               decoration: BoxDecoration(
                 color: textStyleModel.textStyle?.color,
                 border: Border.all(color: Colors.white, width: 1.5),
-                borderRadius: BorderRadius.circular(100),
+                shape: BoxShape.circle,
               ),
               child: Center(
                 child: Icon(
                   Icons.colorize,
                   color: Colors.white,
+                  size: 20,
                 ),
               ),
             ),
-            ...widget.colors.map((color) => _ColorPicker(color)).toList(),
+            ...widget.colors
+                .map(
+                  (color) => _ColorPicker(
+                    color,
+                    color == textStyleModel.textStyle?.color,
+                  ),
+                )
+                .toList(),
           ],
         ),
       ),
@@ -45,8 +55,9 @@ class _ColorPaletteState extends State<ColorPalette> {
 
 class _ColorPicker extends StatelessWidget {
   final Color color;
+  final bool isSelected;
 
-  _ColorPicker(this.color);
+  _ColorPicker(this.color, this.isSelected);
 
   @override
   Widget build(BuildContext context) {
@@ -55,13 +66,16 @@ class _ColorPicker extends StatelessWidget {
     return GestureDetector(
       onTap: () => textStyleModel.editTextColor(color),
       child: Container(
-        width: 40,
-        height: 40,
+        width: 32,
+        height: 44,
         margin: EdgeInsets.only(right: 7),
         decoration: BoxDecoration(
           color: color,
-          border: Border.all(color: Colors.white, width: 1.5),
-          borderRadius: BorderRadius.circular(100),
+          border: Border.all(
+            color: Color(0xffE5F2FF),
+            width: isSelected ? 4 : 2,
+          ),
+          shape: BoxShape.circle,
         ),
       ),
     );

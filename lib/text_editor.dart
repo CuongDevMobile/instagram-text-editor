@@ -24,7 +24,7 @@ class TextEditor extends StatefulWidget {
   /// After edit process completed, [onEditCompleted] callback will be called.
   final void Function(TextStyle, TextAlign, String) onEditCompleted;
 
-  /// [onTextAlignChanged] will be called after [textAlingment] prop has changed
+  /// [onTextAlignChanged] will be called after [textAlignment] prop has changed
   final ValueChanged<TextAlign>? onTextAlignChanged;
 
   /// [onTextStyleChanged] will be called after [textStyle] prop has changed
@@ -34,7 +34,7 @@ class TextEditor extends StatefulWidget {
   final ValueChanged<String>? onTextChanged;
 
   /// The text alignment
-  final TextAlign? textAlingment;
+  final TextAlign? textAlignment;
 
   /// The text style
   final TextStyle? textStyle;
@@ -54,12 +54,18 @@ class TextEditor extends StatefulWidget {
   final double? minFontSize;
   final double? maxFontSize;
 
+  final GestureTapCallback? onClose;
+
+  final String? hint;
+
+  final TextStyle? hintStyle;
+
   /// Create a [TextEditor] widget
   ///
   /// [fonts] list of font families that you want to use in editor.
   ///
   /// After edit process completed, [onEditCompleted] callback will be called
-  /// with new [textStyle], [textAlingment] and [text] value
+  /// with new [textStyle], [textAlignment] and [text] value
   TextEditor({
     required this.fonts,
     required this.onEditCompleted,
@@ -67,13 +73,16 @@ class TextEditor extends StatefulWidget {
     this.backgroundColor,
     this.text = '',
     this.textStyle,
-    this.textAlingment,
+    this.textAlignment,
     this.minFontSize = 1,
     this.maxFontSize = 100,
     this.onTextAlignChanged,
     this.onTextStyleChanged,
     this.onTextChanged,
     this.decoration,
+    this.onClose,
+    this.hint,
+    this.hintStyle,
   });
 
   @override
@@ -90,7 +99,7 @@ class _TextEditorState extends State<TextEditor> {
     _textStyleModel = TextStyleModel(
       widget.text,
       textStyle: widget.textStyle,
-      textAlign: widget.textAlingment,
+      textAlign: widget.textAlignment,
     );
     _fontOptionModel = FontOptionModel(
       _textStyleModel,
@@ -110,7 +119,11 @@ class _TextEditorState extends State<TextEditor> {
 
     // Initialize decorator
     _doneButton = widget.decoration?.doneButton ??
-        Text('Done', style: TextStyle(color: Colors.white));
+        Text(
+          'Done',
+          style: TextStyle(
+              color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
+        );
 
     super.initState();
   }
@@ -129,47 +142,46 @@ class _TextEditorState extends State<TextEditor> {
       textStyleModel: _textStyleModel,
       fontOptionModel: _fontOptionModel,
       child: Container(
-        padding: EdgeInsets.only(right: 10, left: 10),
         color: widget.backgroundColor,
         child: Column(
           children: [
-            Row(
-              children: [
-                Expanded(child: Container()),
-                Expanded(
-                  flex: 3,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextAlignment(
-                        left: widget.decoration?.alignment?.left,
-                        center: widget.decoration?.alignment?.center,
-                        right: widget.decoration?.alignment?.right,
-                      ),
-                      SizedBox(width: 20),
-                      FontOptionSwitch(
-                        fontFamilySwitch: widget.decoration?.fontFamily,
-                        colorPaletteSwitch: widget.decoration?.colorPalette,
-                      ),
-                      SizedBox(width: 20),
-                      TextBackgroundColor(
-                        enableWidget: widget.decoration?.textBackground?.enable,
-                        disableWidget:
-                            widget.decoration?.textBackground?.disable,
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      onTap: _editCompleteHandler,
-                      child: _doneButton,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: [
+                  InkWell(
+                    onTap: widget.onClose,
+                    child: Icon(
+                      Icons.clear,
+                      color: Colors.white,
                     ),
                   ),
-                ),
-              ],
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FontOption(
+                          fontFamilySwitch: widget.decoration?.fontFamily,
+                        ),
+                        SizedBox(width: 20),
+                        TextAlignment(
+                          left: widget.decoration?.alignment?.left,
+                          center: widget.decoration?.alignment?.center,
+                          right: widget.decoration?.alignment?.right,
+                        ),
+                        SizedBox(width: 20),
+                        ColorOption(
+                          colorPaletteSwitch: widget.decoration?.colorPalette,
+                        ),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: _editCompleteHandler,
+                    child: _doneButton,
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: Row(
@@ -179,7 +191,12 @@ class _TextEditorState extends State<TextEditor> {
                     maxFontSize: widget.maxFontSize!,
                   ),
                   Expanded(
-                    child: Container(
+                    child: InkWell(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      onTap: () {
+                        FocusScope.of(context).unfocus();
+                      },
                       child: Center(
                         child: TextField(
                           controller: TextEditingController()
@@ -191,7 +208,20 @@ class _TextEditorState extends State<TextEditor> {
                           textAlign: _textStyleModel.textAlign!,
                           autofocus: true,
                           cursorColor: Colors.white,
-                          decoration: null,
+                          showCursor: true,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            focusedErrorBorder: InputBorder.none,
+                            hintText: widget.hint ?? 'Start typing',
+                            hintStyle: widget.hintStyle ??
+                                _textStyleModel.textStyle?.copyWith(
+                                  color:Colors.grey.withOpacity(.5),
+                                ),
+                          ),
                         ),
                       ),
                     ),
@@ -200,7 +230,11 @@ class _TextEditorState extends State<TextEditor> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(bottom: 5),
+              margin: EdgeInsets.only(
+                bottom: 5,
+                left: 20,
+                right: 20,
+              ),
               child: _fontOptionModel.status == FontOptionStatus.fontFamily
                   ? FontFamily(_fontOptionModel.fonts)
                   : ColorPalette(_fontOptionModel.colors!),

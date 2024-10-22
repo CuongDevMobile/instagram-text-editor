@@ -15,12 +15,17 @@ class _FontFamilyState extends State<FontFamily> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.only(bottom: 20),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
           children: widget.fonts
-              .map((fontModel) =>
-                  _FontFamilyPicker(fontModel.font, fontModel.isSelected))
+              .map(
+                (fontModel) => _FontFamilyPicker(
+                  fontModel.font,
+                  fontModel.isSelected,
+                ),
+              )
               .toList(),
         ),
       ),
@@ -41,12 +46,15 @@ class _FontFamilyPicker extends StatelessWidget {
     return GestureDetector(
       onTap: () => fontOptionModel.selectFontFamily(font),
       child: Container(
-        width: 40,
-        height: 40,
-        margin: EdgeInsets.only(right: 7),
+        width: 48,
+        height: 44,
+        margin: EdgeInsets.only(right: 8),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(100),
-          color: isSelected ? Colors.white : Colors.black45,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isSelected ? Color(0xff3E8AFD) : Colors.transparent,
+            width: 2,
+          ),
         ),
         child: Center(
           child: Text(
@@ -54,6 +62,7 @@ class _FontFamilyPicker extends StatelessWidget {
             style: TextStyle(
               color: isSelected ? Colors.orange : Colors.white,
               fontFamily: font,
+              fontSize: 20,
             ),
           ),
         ),

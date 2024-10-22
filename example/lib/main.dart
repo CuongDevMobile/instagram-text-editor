@@ -76,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   fonts: fonts,
                   text: text,
                   textStyle: textStyle,
-                  textAlingment: textAlign,
+                  textAlignment: textAlign,
                   minFontSize: 10,
                   // paletteColors: [
                   //   Colors.black,
