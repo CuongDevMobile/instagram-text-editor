@@ -62,8 +62,10 @@ class FontOption extends StatelessWidget {
             child: Center(
               child: Text(
                 'Aa',
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),

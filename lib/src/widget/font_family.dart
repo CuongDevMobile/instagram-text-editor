@@ -60,7 +60,7 @@ class _FontFamilyPicker extends StatelessWidget {
           child: Text(
             'Aa',
             style: TextStyle(
-              color: isSelected ? Colors.orange : Colors.white,
+              color: Colors.white,
               fontFamily: font,
               fontSize: 20,
             ),
