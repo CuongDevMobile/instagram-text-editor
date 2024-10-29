@@ -201,7 +201,10 @@ class _TextEditorState extends State<TextEditor> {
                         child: TextField(
                           controller: TextEditingController()
                             ..text = _textStyleModel.text,
-                          onChanged: (value) => _textStyleModel.text = value,
+                          onChanged: (value) {
+                            _textStyleModel.text = value;
+                            widget.onTextChanged?.call(value);
+                          },
                           maxLines: null,
                           keyboardType: TextInputType.multiline,
                           style: _textStyleModel.textStyle,
@@ -219,7 +222,7 @@ class _TextEditorState extends State<TextEditor> {
                             hintText: widget.hint ?? 'Start typing',
                             hintStyle: widget.hintStyle ??
                                 _textStyleModel.textStyle?.copyWith(
-                                  color:Colors.grey.withOpacity(.5),
+                                  color: Colors.grey.withOpacity(.5),
                                 ),
                           ),
                         ),
