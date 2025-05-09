@@ -5,12 +5,10 @@ import 'package:text_editor/src/font_option_model.dart';
 import 'package:text_editor/src/text_style_model.dart';
 import 'package:text_editor/src/widget/color_palette.dart';
 import 'package:text_editor/src/widget/font_family.dart';
-import 'package:text_editor/src/widget/font_size.dart';
 import 'package:text_editor/src/widget/font_option_switch.dart';
+import 'package:text_editor/src/widget/font_size.dart';
 import 'package:text_editor/src/widget/text_alignment.dart';
 import 'package:text_editor/text_editor_data.dart';
-
-import 'src/widget/text_background_color.dart';
 
 /// Instagram like text editor
 /// A flutter widget that edit text style and text alignment
@@ -60,6 +58,8 @@ class TextEditor extends StatefulWidget {
 
   final TextStyle? hintStyle;
 
+  final TextEditingController? controller;
+
   /// Create a [TextEditor] widget
   ///
   /// [fonts] list of font families that you want to use in editor.
@@ -83,6 +83,7 @@ class TextEditor extends StatefulWidget {
     this.onClose,
     this.hint,
     this.hintStyle,
+    this.controller,
   });
 
   @override
@@ -93,6 +94,7 @@ class _TextEditorState extends State<TextEditor> {
   late TextStyleModel _textStyleModel;
   late FontOptionModel _fontOptionModel;
   late Widget _doneButton;
+  late final TextEditingController _controller;
 
   @override
   void initState() {
@@ -124,7 +126,8 @@ class _TextEditorState extends State<TextEditor> {
           style: TextStyle(
               color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
         );
-
+    _controller = widget.controller ?? TextEditingController();
+    _controller.text = _textStyleModel.text;
     super.initState();
   }
 
@@ -199,8 +202,7 @@ class _TextEditorState extends State<TextEditor> {
                       },
                       child: Center(
                         child: TextField(
-                          controller: TextEditingController()
-                            ..text = _textStyleModel.text,
+                          controller: _controller,
                           onChanged: (value) {
                             _textStyleModel.text = value;
                             widget.onTextChanged?.call(value);
@@ -246,6 +248,14 @@ class _TextEditorState extends State<TextEditor> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    if (widget.controller == null) {
+      _controller.dispose();
+    }
+    super.dispose();
   }
 }
 
